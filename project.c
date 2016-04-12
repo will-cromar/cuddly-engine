@@ -138,9 +138,9 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
-    *extended_value = *extended_value & 0x0000FFFF; // Only use the lower half of the value
+    *extended_value = offset & 0x0000FFFF; // Only use the lower half of the value
     int sign = *extended_value >> 15;   // grab just the 16th bit
-    if (sign == 1)                      // If signed,.
+    if (sign == 1)                      // If signed
         *extended_value += 0xFFFF0000;  // extend with 1's
 }
 
@@ -148,7 +148,45 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
+    char ALUControl = -1;
+    if (ALUOp != 0b111) {
+        ALUControl = ALUOp; // If not an R-type, use ALUOp
+    } else {
+        char lower4 = (char) (funct & 0b1111); // Grab the lower 4 bits of funct
+        switch (lower4) {
+            case 0b0000:
+                ALUControl = 0b0010; // add
+                break;
 
+            case 0b0010:
+                ALUControl = 0b0110; // sub
+                break;
+
+            case 0b0100:
+                ALUControl = 0b0000; // snd
+                break;
+
+            case 0b0101:
+                ALUControl = 0b0001; // or
+                break;
+
+            case 0b1010:
+                ALUControl = 0b0111; // slt
+                break;
+
+            default:
+                return 1;
+        }
+    }
+
+
+    // Decide whether to use extended value or data2
+    if (ALUSrc)
+        ALU(data1, extended_value, ALUControl, ALUresult, Zero);
+    else
+        ALU(data1, data2, ALUControl, ALUresult, Zero);
+
+    return 0;
 }
 
 /* Read / Write Memory */
