@@ -235,7 +235,11 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
+    unsigned dataToWrite = MemtoReg == 1 ? memdata : ALUresult;
+    unsigned destination = RegDst ==  1 ? r3 : r2;
 
+    if (RegWrite)
+        Reg[destination] = dataToWrite;
 }
 
 /* PC update */
