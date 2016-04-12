@@ -74,23 +74,28 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 {
     char ALUControl = -1;
     if (ALUOp != 0b111) {
-        ALUControl = ALUOp;
+        ALUControl = ALUOp; // If not an R-type, use ALUOp
     } else {
-        switch (funct) {
+        char lower4 = (char) (funct & 0b1111); // Grab the lower 4 bits of funct
+        switch (lower4) {
             case 0b0000:
-                ALUControl = 0b0010;
+                ALUControl = 0b0010; // add
                 break;
 
             case 0b0010:
-                ALUControl = 0b0110;
+                ALUControl = 0b0110; // sub
                 break;
 
             case 0b0100:
-                ALUControl = 0b0000;
+                ALUControl = 0b0000; // snd
+                break;
+
+            case 0b0101:
+                ALUControl = 0b0001; // or
                 break;
 
             case 0b1010:
-                ALUControl = 0b0111;
+                ALUControl = 0b0111; // slt
                 break;
 
             default:
@@ -99,8 +104,11 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
     }
 
 
-    if (ALUSrc) ALU(data1, extended_value, ALUControl, ALUresult, Zero);
-    else ALU(data1, data2, ALUControl, ALUresult, Zero);
+    // Decide whether to use extended value or data2
+    if (ALUSrc)
+        ALU(data1, extended_value, ALUControl, ALUresult, Zero);
+    else
+        ALU(data1, data2, ALUControl, ALUresult, Zero);
 
     return 0;
 }
