@@ -32,7 +32,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
     if(PC%4 != 0 || PC < 0x4000 || PC > 0xFFFF){
         return 1;
     }
-    *instruction = Mem[PC];
+    *instruction = Mem[PC>>2];
     return 0;
 }
 
@@ -104,23 +104,57 @@ int instruction_decode(unsigned op,struct_controls *controls)
     controls->MemtoReg = '2';
     controls->ALUSrc = '2';
     controls->ALUOp = (char)0b000;
-    unsigned first = grabOnly(op,0,2);
-    unsigned last = grabOnly(op,3,5);
+
     //add
     if(op==100000){
-
+        controls->ALUOp=(char)0b000;
+        controls->RegDst='1';
+        controls->ALUSrc='1';
     }
     //sub
+    if(op == 100010){
+
+    }
     //addi
+    if(op==001000){
+
+    }
     //and
+    if(op==100100){
+
+    }
     //or
+    if(op==100101){
+
+    }
     //lw
+    if(op==100011){
+
+    }
     //sw
+    if(op==101011){
+
+    }
     //lui
+    if(op==001111){
+
+    }
     //beq
+    if(op==000100){
+
+    }
     //slt
+    if(op==101010){
+
+    }
     //slti
+    if(op==001010){
+
+    }
     //sltu
+    if(op==101001){
+
+    }
     //sltiu
     //j
 }
