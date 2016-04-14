@@ -186,26 +186,29 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
     if (ALUOp != 0b111) {
         ALUControl = ALUOp; // If not an R-type, use ALUOp
     } else {
-        char lower4 = (char) (funct & 0b1111); // Grab the lower 4 bits of funct
-        switch (lower4) {
-            case 0b0000:
-                ALUControl = 0b0010; // add
+        switch (funct) {
+            case 0b100000:
+                ALUControl = 0b000; // add
                 break;
 
-            case 0b0010:
-                ALUControl = 0b0110; // sub
+            case 0b100010:
+                ALUControl = 0b001; // sub
                 break;
 
-            case 0b0100:
-                ALUControl = 0b0000; // snd
+            case 0b100100:
+                ALUControl = 0b100; // snd
                 break;
 
-            case 0b0101:
-                ALUControl = 0b0001; // or
+            case 0b100101:
+                ALUControl = 0b101; // or
                 break;
 
-            case 0b1010:
-                ALUControl = 0b0111; // slt
+            case 0b101010:
+                ALUControl = 0b010; // slt
+                break;
+
+            case 0b101011:
+                ALUControl = 0b011; // sltu
                 break;
 
             default:
@@ -227,7 +230,20 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+    // One control signal must be asserted to take properly execute. Halt condition if both or neither are asserted at once.
+    if (MemWrite == MemRead) return 1;
+    else {
+        // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
+        if (MemWrite) {
+            Mem[ALUresult] = data2;
+        }
+        // If 'MemRead' is asserted, read data from memory into 'memdata' (location: ALUresult).
+        if (MemRead) {
+            *memdata = Mem[ALUresult];
+        }
+    }
 
+    return 0;
 }
 
 
@@ -246,6 +262,25 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
+    // Add 4 bytes to program counter to isolate next instruction.
+    *PC += 4;
+    // Shift 'jsec' instruction.
+    jsec = jsec << 2;
+    // If 'Jump' control signal is asserted, execute jump datapath.
+    if (Jump) {
+        // The new location of 'PC' is the jump address, indicated by 'jsec'.
 
+        return;
+    }
+    else {
+        // If 'Jump' is not asserted, we need to look at 'Branch' and 'Zero.' These will tell us if we Branch on Equal.
+        if (Branch & Zero) {
+            // Take the sign extension, bitshift it left by 2, then add it to the PC value.
+            extended_value = extended_value << 2;
+            *PC += extended_value;
+        }
+    }
+
+    return;
 }
 
