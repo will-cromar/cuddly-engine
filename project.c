@@ -230,36 +230,16 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
     if (ALUOp != 0b111) {
         ALUControl = ALUOp; // If not an R-type, use ALUOp
     } else {
-        switch (funct) {
-            case 0b100000:
-                ALUControl = 0b000; // add
-                break;
-
-            case 0b100010:
-                ALUControl = 0b001; // sub
-                break;
-
-            case 0b100100:
-                ALUControl = 0b100; // snd
-                break;
-
-            case 0b100101:
-                ALUControl = 0b101; // or
-                break;
-
-            case 0b101010:
-                ALUControl = 0b010; // slt
-                break;
-
-            case 0b101011:
-                ALUControl = 0b011; // sltu
-                break;
-
-            default:
-                return 1;
-        }
+        // Derive operation from funct
+        funct = funct & 0b111111;
+        if (funct == 0b100000) ALUControl = 0b000; // add
+        else if (funct == 0b100010) ALUControl = 0b001; // sub
+        else if (funct == 0b100100) ALUControl = 0b100; // and
+        else if (funct == 0b100101) ALUControl = 0b101; // or
+        else if (funct == 0b101010) ALUControl = 0b010; // slt
+        else if (funct == 0b101011) ALUControl = 0b011; // sltu
+        else return 1; // Halt if funct is invalid
     }
-
 
     // Decide whether to use extended value or data2
     if (ALUSrc)
@@ -308,12 +288,11 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 {
     // Add 4 bytes to program counter to isolate next instruction.
     *PC += 4;
-    // Shift 'jsec' instruction.
-    jsec = jsec << 2;
+
     // If 'Jump' control signal is asserted, execute jump datapath.
     if (Jump) {
-        // The new location of 'PC' is the jump address, indicated by 'jsec'.
-
+        // The new location of 'PC' is the jump address, indicated by 'jsec', shifted by two.
+        *PC = jsec << 2;
         return;
     }
     else {
