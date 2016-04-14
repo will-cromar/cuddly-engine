@@ -111,7 +111,6 @@ int instruction_decode(unsigned op,struct_controls *controls)
     //addi
     if(op == 0b001000){
         controls->ALUOp = 0b000;
-        controls->MemWrite = 1;
         controls->RegDst = 0;
         controls->ALUSrc = 1;
         return 0;
@@ -258,16 +257,16 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
     // One control signal must be asserted to take properly execute. Halt condition if both or neither are asserted at once.
-    if (MemWrite == MemRead) return 1;
-    else {
-        // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
-        if (MemWrite) {
-            Mem[ALUresult] = data2;
-        }
-        // If 'MemRead' is asserted, read data from memory into 'memdata' (location: ALUresult).
-        if (MemRead) {
-            *memdata = Mem[ALUresult];
-        }
+    if (MemWrite && MemRead) {
+        return 1;
+    }
+    // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
+    else if (MemWrite) {
+        Mem[ALUresult] = data2;
+    }
+    // If 'MemRead' is asserted, read data from memory into 'memdata' (location: ALUresult).
+    else if (MemRead) {
+        *memdata = Mem[ALUresult];
     }
 
     return 0;
