@@ -95,68 +95,112 @@ int instruction_decode(unsigned op,struct_controls *controls)
     The following table shows the meaning of the values of ALUOp.
 
      */
-    controls->MemRead = '2';
-    controls->MemWrite = '2';
-    controls->RegWrite = '2';
-    controls->RegDst = '2';
-    controls->Jump = '2';
-    controls->Branch = '2';
-    controls->MemtoReg = '2';
-    controls->ALUSrc = '2';
-    controls->ALUOp = (char)0b000;
-
-    //add
-    if(op==100000){
-        controls->ALUOp=(char)0b000;
-        controls->RegDst='1';
-        controls->ALUSrc='1';
-    }
-    //sub
-    if(op == 100010){
-
+    //Assume R type
+    controls->MemRead = '0';
+    controls->MemWrite = '0';
+    controls->RegWrite = '1';
+    controls->RegDst = '1';
+    controls->Jump = '0';
+    controls->Branch = '0';
+    controls->MemtoReg = '0';
+    controls->ALUSrc = '0';
+    controls->ALUOp = (char)0b111;
+    if(op==000000){
+        return 0;
     }
     //addi
     if(op==001000){
-
+        controls->ALUSrc='1';
+        return 0;
     }
     //and
     if(op==100100){
-
+        return 0;
     }
     //or
     if(op==100101){
-
+        return 0;
     }
     //lw
     if(op==100011){
-
+        controls->MemRead = '1';
+        controls->MemWrite = '0';
+        controls->RegWrite = '1';
+        controls->RegDst = '0';
+        controls->Jump = '0';
+        controls->Branch = '0';
+        controls->MemtoReg = '1';
+        controls->ALUSrc = '1';
+        controls->ALUOp = (char)0b000;
+        return 0;
     }
     //sw
     if(op==101011){
-
+        controls->MemRead = '0';
+        controls->MemWrite = '1';
+        controls->RegWrite = '0';
+        controls->RegDst = '2';
+        controls->Jump = '0';
+        controls->Branch = '0';
+        controls->MemtoReg = '2';
+        controls->ALUSrc = '1';
+        controls->ALUOp = (char)0b000;
+        return 0;
     }
     //lui
     if(op==001111){
-
+        controls->ALUSrc = '1';
+        controls->ALUOp = (char)0b110;
+        return 0;
     }
     //beq
     if(op==000100){
-
+        controls->MemRead = '0';
+        controls->MemWrite = '0';
+        controls->RegWrite = '0';
+        controls->RegDst = '2';
+        controls->Jump = '0';
+        controls->Branch = '1';
+        controls->MemtoReg = '2';
+        controls->ALUSrc = '0';
+        controls->ALUOp = (char)0b001;
+        return 0;
     }
     //slt
     if(op==101010){
-
+        controls->ALUOp = (char)0b010;
+        return 0;
     }
     //slti
     if(op==001010){
-
+        controls->ALUSrc = '0';
+        controls->ALUOp = (char)0b001;
+        return 0;
     }
     //sltu
     if(op==101001){
-
+        controls->ALUOp = (char)0b011;
+        return 0;
     }
     //sltiu
+    if(op==001001){
+        controls->ALUSrc = '0';
+        controls->ALUOp = (char)0b011;
+        return 0;
+    }
     //j
+    if(op==000010){
+        controls->MemRead = '2';
+        controls->MemWrite = '2';
+        controls->RegWrite = '2';
+        controls->RegDst = '2';
+        controls->Jump = '1';
+        controls->Branch = '2';
+        controls->MemtoReg = '2';
+        controls->ALUSrc = '1';
+        controls->ALUOp = (char)0b000;
+        return 0;
+    }
 }
 
 /* Read Register */
