@@ -203,6 +203,8 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->ALUOp = (char)0b000;
         return 0;
     }
+
+    return 1;
 }
 
 /* Read Register */
@@ -228,7 +230,7 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-    char ALUControl = -1;
+    char ALUControl;
     if (ALUOp != 0b111) {
         ALUControl = ALUOp; // If not an R-type, use ALUOp
     } else {
@@ -262,11 +264,11 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
     }
     // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
     else if (MemWrite) {
-        Mem[ALUresult] = data2;
+        Mem[ALUresult >> 2] = data2;
     }
     // If 'MemRead' is asserted, read data from memory into 'memdata' (location: ALUresult).
     else if (MemRead) {
-        *memdata = Mem[ALUresult];
+        *memdata = Mem[ALUresult >> 2];
     }
 
     return 0;
