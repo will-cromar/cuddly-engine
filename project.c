@@ -152,6 +152,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
     //lui
     if(op == 0b001111){
         controls->ALUSrc = 1;
+        controls->RegDst = 0;
         controls->ALUOp = (char)0b110;
         return 0;
     }
@@ -176,6 +177,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
     //slti
     if(op == 0b001010){
         controls->ALUSrc = 0;
+        controls->RegDst = 0;
         controls->ALUOp = (char)0b001;
         return 0;
     }
@@ -187,6 +189,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
     //sltiu
     if(op == 0b001001){
         controls->ALUSrc = 0;
+        controls->RegDst = 0;
         controls->ALUOp = (char)0b011;
         return 0;
     }
