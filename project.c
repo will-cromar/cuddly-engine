@@ -262,7 +262,7 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
     // One control signal must be asserted to take properly execute. Halt condition if both or neither are asserted at once.
-    if (MemWrite && MemRead) {
+    if (MemWrite == 1 && MemRead == 1) {
         return 1;
     }
     // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
