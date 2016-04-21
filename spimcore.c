@@ -109,6 +109,8 @@ void Step(void)
 	/* fetch instruction from memory */
 	Halt = instruction_fetch(PC,Mem,&instruction);
 
+	printf("%x\n", instruction);
+
 	if(!Halt)
 	{
 		/* partition the instruction */
