@@ -60,6 +60,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 
 }
 
+// Returns the bits of intstruction from begIndex to endidx
 unsigned grabOnly(unsigned instruction, int begIndex, int endidx){
     unsigned bitmask = 0;
     int i;
@@ -207,7 +208,7 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 {
     *extended_value = offset & 0x0000FFFF; // Only use the lower half of the value
     int sign = *extended_value >> 15;   // grab just the 16th bit
-    if (sign == 1)                      // If signed
+    if (sign == 1)                      // If signed,
         *extended_value += 0xFFFF0000;  // extend with 1's
 }
 
@@ -243,12 +244,14 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-    // One control signal must be asserted to take properly execute. Halt condition if both or neither are asserted at once.
+    // One control signal must be asserted to take properly execute. Both means "don't care"
     if (MemWrite && MemRead) {
         return 0;
     }
     // Check that ALUresult is a proper memory index (Halt condition).
-    if (!(ALUresult % 4) || ALUresult < 0x4000 || ALUresult > 0xFFFF) return 1;
+    if (!(ALUresult % 4) || ALUresult < 0x4000 || ALUresult > 0xFFFF)
+        return 1;
+
     // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
     else if (MemWrite) {
         Mem[ALUresult >> 2] = data2;
@@ -269,7 +272,8 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
     unsigned dataToWrite = MemtoReg == 1 ? memdata : ALUresult;
     unsigned destination = RegDst ==  1 ? r3 : r2;
 
-    if (RegWrite && destination!=0)
+    // Don't write to register $zero
+    if (RegWrite && destination != 0)
         Reg[destination] = dataToWrite;
 }
 
@@ -293,6 +297,6 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
             *PC += extended_value;
     }
 
-return;
+    return;
 }
 
