@@ -244,9 +244,11 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
     // One control signal must be asserted to take properly execute. Halt condition if both or neither are asserted at once.
-    if (MemWrite == 1 && MemRead == 1) {
-        return 1;
+    if (MemWrite && MemRead) {
+        return 0;
     }
+    // Check that ALUresult is a proper memory index (Halt condition).
+    if (!(ALUresult % 4) || ALUresult < 0x4000 || ALUresult > 0xFFFF) return 1;
     // If 'MemWrite' is asserted, write data from register to 'Mem' (location: 'ALUresult').
     else if (MemWrite) {
         Mem[ALUresult >> 2] = data2;
@@ -284,15 +286,13 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
         *PC = jsec << 2;
         return;
     }
-    else {
-        // If 'Jump' is not asserted, we need to look at 'Branch' and 'Zero.' These will tell us if we Branch on Equal.
-        if (Branch && Zero) {
+    // If 'Jump' is not asserted, we need to look at 'Branch' and 'Zero.' These will tell us if we Branch on Equal.
+    else if (Branch && Zero) {
             // Take the sign extension, bitshift it left by 2, then add it to the PC value.
             extended_value = extended_value << 2;
             *PC += extended_value;
-        }
     }
 
-    return;
+return;
 }
 
