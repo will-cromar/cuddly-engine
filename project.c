@@ -115,14 +115,6 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->ALUSrc = 1;
         return 0;
     }
-    //and
-    if(op == 0b100100){
-        return 0;
-    }
-    //or
-    if(op == 0b100101){
-        return 0;
-    }
     //lw
     if(op == 0b100011){
         controls->MemRead = 1;
@@ -169,21 +161,11 @@ int instruction_decode(unsigned op,struct_controls *controls)
         controls->ALUOp = (char)0b001;
         return 0;
     }
-    //slt
-    if(op == 0b101010){
-        controls->ALUOp = (char)0b010;
-        return 0;
-    }
     //slti
-    if(op == 0b001010){
+    if(op == 0b001010) {
         controls->ALUSrc = 0;
         controls->RegDst = 0;
-        controls->ALUOp = (char)0b001;
-        return 0;
-    }
-    //sltu
-    if(op == 0b101001){
-        controls->ALUOp = (char)0b011;
+        controls->ALUOp = (char) 0b001;
         return 0;
     }
     //sltiu
@@ -285,7 +267,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
     unsigned dataToWrite = MemtoReg == 1 ? memdata : ALUresult;
     unsigned destination = RegDst ==  1 ? r3 : r2;
 
-    if (RegWrite)
+    if (RegWrite && destination!=0)
         Reg[destination] = dataToWrite;
 }
 
