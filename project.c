@@ -273,7 +273,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
     unsigned destination = RegDst ==  1 ? r3 : r2;
 
     // Don't write to register $zero
-    if (RegWrite )//&& destination != 0)
+    if (RegWrite && destination != 0)
         Reg[destination] = dataToWrite;
 }
 
