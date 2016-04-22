@@ -164,14 +164,14 @@ int instruction_decode(unsigned op,struct_controls *controls)
     }
     //slti
     if(op == 0b001010) {
-        controls->ALUSrc = 0;
+        controls->ALUSrc = 1;
         controls->RegDst = 0;
-        controls->ALUOp = (char) 0b001;
+        controls->ALUOp = (char) 0b010;
         return 0;
     }
     //sltiu
     if(op == 0b001011){
-        controls->ALUSrc = 0;
+        controls->ALUSrc = 1;
         controls->RegDst = 0;
         controls->ALUOp = (char)0b011;
         return 0;
