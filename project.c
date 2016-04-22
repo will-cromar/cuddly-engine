@@ -170,7 +170,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
         return 0;
     }
     //sltiu
-    if(op == 0b001001){
+    if(op == 0b001011){
         controls->ALUSrc = 0;
         controls->RegDst = 0;
         controls->ALUOp = (char)0b011;
